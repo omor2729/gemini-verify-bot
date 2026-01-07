@@ -385,14 +385,19 @@ class GeminiVerifier:
         self.vid = self._parse_id(url)
         self.fingerprint = generate_fingerprint()
         
-        # Configure proxy if provided
-        proxies = None
+                # Configure proxy if provided
+        self.client_proxy = None
         if proxy:
             if not proxy.startswith("http"):
                 proxy = f"http://{proxy}"
-            proxies = {"all://": proxy}
+            self.client_proxy = proxy
         
-        self.client = httpx.Client(timeout=30, proxies=proxies)
+        # সংশোধিত httpx ক্লায়েন্ট (proxies এর বদলে proxy ব্যবহার করা হয়েছে)
+        if self.client_proxy:
+            self.client = httpx.Client(timeout=30, proxy=self.client_proxy)
+        else:
+            self.client = httpx.Client(timeout=30)
+
         self.org = None
     
     def __del__(self):
